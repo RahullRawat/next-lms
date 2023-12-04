@@ -1,11 +1,11 @@
-import NavbarRoutes from "@/components/navbar-routes";
-import MobileSidebar from "./mobile-sidebar";
+import NavbarRoutes from '@/components/navbar-routes'
+import MobileSidebar from './mobile-sidebar'
 
 export default function Navbar() {
   return (
-    <div className="flex border-b bg-white h-full shadow-sm p-4">
+    <div className="flex h-full border-b bg-white p-4 shadow-sm">
       <MobileSidebar />
       <NavbarRoutes />
     </div>
-  );
+  )
 }

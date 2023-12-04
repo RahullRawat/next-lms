@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { UserButton } from "@clerk/nextjs";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "./ui/button";
-import { LogOut } from "lucide-react";
+import { UserButton } from '@clerk/nextjs'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { LogOut } from 'lucide-react'
+import { Button } from './ui/button'
 
 export default function NavbarRoutes() {
-  const pathName = usePathname();
+  const pathName = usePathname()
 
-  const isTeacherRoute = pathName?.startsWith("teacher");
-  const isPlayerRoute = pathName?.includes("teacher");
+  const isTeacherRoute = pathName?.startsWith('teacher')
+  const isPlayerRoute = pathName?.includes('teacher')
 
   return (
-    <div className="ml-auto flex gap-x-2 items-center">
+    <div className="ml-auto flex items-center gap-x-2">
       {isTeacherRoute || isPlayerRoute ? (
         <Link href="/">
           <Button size="sm" variant="ghost">
-            <LogOut className="h-4 w-4 mr-2" />
+            <LogOut className="mr-2 h-4 w-4" />
             Exit
           </Button>
         </Link>
@@ -30,5 +30,5 @@ export default function NavbarRoutes() {
       )}
       <UserButton afterSignOutUrl="/" />
     </div>
-  );
+  )
 }

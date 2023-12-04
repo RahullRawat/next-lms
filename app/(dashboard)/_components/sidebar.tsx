@@ -1,15 +1,15 @@
-import Logo from "./logo";
-import SidebarRoutes from "./sidebar-routes";
+import Logo from './logo'
+import SidebarRoutes from './sidebar-routes'
 
 export default function Sidebar() {
   return (
-    <div className="h-full border-r bg-white shadow-sm flex flex-col overflow-y-auto">
+    <div className="flex h-full flex-col overflow-y-auto border-r bg-white shadow-sm">
       <div className="p-4">
         <Logo />
       </div>
-      <div className="flex flex-col w-full">
+      <div className="flex w-full flex-col">
         <SidebarRoutes />
       </div>
     </div>
-  );
+  )
 }
