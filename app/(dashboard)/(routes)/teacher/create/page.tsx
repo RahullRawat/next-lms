@@ -6,13 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Link from 'next/link'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
 
 export default function CreateCourse() {
-  const { toast } = useToast()
   const router = useRouter()
   const formSchema = z.object({
     title: z.string().min(1),
@@ -31,13 +30,9 @@ export default function CreateCourse() {
     try {
       const response = await axios.post('/api/courses', values)
       router.push(`/teacher/courses/${response.data.id}`)
-      toast({
-        title: 'Course Created Successfully',
-      })
+      toast.success('Course Created Successfully')
     } catch {
-      toast({
-        title: 'Something went wrong',
-      })
+      toast.error('Something went wrong')
     }
   }
 
