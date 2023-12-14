@@ -4,6 +4,7 @@ import { LayoutDashboard } from 'lucide-react'
 import { db } from '@/lib/db'
 import { IconBadge } from '@/components/icon-badge'
 import TitleForm from './_components/title-form'
+import DescriptionForm from './_components/description-form'
 
 export default async function CourseIdPage({ params }: { params: { courseId: string } }) {
   const { userId } = auth()
@@ -40,6 +41,7 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
             <h2 className="text-xl">Customize your course</h2>
           </div>
           <TitleForm courseId={params.courseId} initialData={course} />
+          <DescriptionForm courseId={params.courseId} initialData={course} />
         </div>
       </div>
     </div>
