@@ -6,6 +6,7 @@ import { IconBadge } from '@/components/icon-badge'
 import TitleForm from './_components/title-form'
 import DescriptionForm from './_components/description-form'
 import ImageForm from './_components/image-form'
+import CategoryForm from './_components/category-form'
 
 export default async function CourseIdPage({ params }: { params: { courseId: string } }) {
   const { userId } = auth()
@@ -22,6 +23,12 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
   if (!course) {
     redirect('/')
   }
+
+  const categories = await db.category.findMany({
+    orderBy: {
+      name: 'asc',
+    },
+  })
 
   const requiredFields = [course.title, course.description, course.imageUrl, course.price, course.categoryId]
   const completedFields = requiredFields.filter(Boolean).length
@@ -44,6 +51,14 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
           <TitleForm courseId={params.courseId} initialData={course} />
           <DescriptionForm courseId={params.courseId} initialData={course} />
           <ImageForm courseId={params.courseId} initialData={course} />
+          <CategoryForm
+            courseId={params.courseId}
+            initialData={course}
+            options={categories.map((category) => ({
+              label: category.name,
+              value: category.id,
+            }))}
+          />
         </div>
       </div>
     </div>
