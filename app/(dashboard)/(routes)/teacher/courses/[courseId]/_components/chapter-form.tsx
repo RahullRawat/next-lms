@@ -54,8 +54,8 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
     }
   }
 
-  function onEdit(id: string) {
-    router.push(`/api/courses/${courseId}/chapters/${id}`)
+  const onEdit = (id: string) => {
+    router.push(`/teacher/courses/${courseId}/chapters/${id}`)
   }
 
   async function onReorder(updateData: { id: string; position: number }[]) {
