@@ -9,6 +9,7 @@ import ImageForm from './_components/image-form'
 import CategoryForm from './_components/category-form'
 import PriceForm from './_components/price-form'
 import AttachmentForm from './_components/attachment-form'
+import { ChaptersForm } from './_components/chapter-form'
 
 export default async function CourseIdPage({ params }: { params: { courseId: string } }) {
   const { userId } = auth()
@@ -17,17 +18,8 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
   }
 
   const course = await db.course.findUnique({
-    where: {
-      id: params.courseId,
-      createdById: userId,
-    },
-    include: {
-      attachments: {
-        orderBy: {
-          createdAt: 'desc',
-        },
-      },
-    },
+    where: { id: params.courseId, createdById: userId },
+    include: { attachments: { orderBy: { createdAt: 'desc' } }, chapters: { orderBy: { position: 'asc' } } },
   })
 
   if (!course) {
@@ -40,7 +32,14 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
     },
   })
 
-  const requiredFields = [course.title, course.description, course.imageUrl, course.price, course.categoryId]
+  const requiredFields = [
+    course.title,
+    course.description,
+    course.imageUrl,
+    course.price,
+    course.categoryId,
+    course.chapters.some((chapter) => chapter.isPublished),
+  ]
   const completedFields = requiredFields.filter(Boolean).length
   const completionText = `(${completedFields}/${requiredFields.length})`
 
@@ -76,7 +75,7 @@ export default async function CourseIdPage({ params }: { params: { courseId: str
               <IconBadge icon={ListChecks} />
               <h2 className="text-xl">Course chapters</h2>
             </div>
-            <div>TODO: add chapters</div>
+            <ChaptersForm initialData={course} courseId={course.id} />
           </div>
           <div>
             <div className="flex items-center gap-x-2">
