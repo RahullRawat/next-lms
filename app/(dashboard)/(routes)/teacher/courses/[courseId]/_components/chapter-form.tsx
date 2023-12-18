@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Input } from '@/components/ui/input'
+import ChaptersList from './chapters-list'
 
 interface ChaptersFormProps {
   initialData: Course & { chapters: Chapter[] }
@@ -50,6 +51,26 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
       router.refresh()
     } catch {
       toast.error('Something went wrong')
+    }
+  }
+
+  function onEdit(id: string) {
+    router.push(`/api/courses/${courseId}/chapters/${id}`)
+  }
+
+  async function onReorder(updateData: { id: string; position: number }[]) {
+    try {
+      setIsUpdating(true)
+
+      await axios.put(`/api/courses/${courseId}/chapters/reorder`, {
+        list: updateData,
+      })
+      toast.success('Chapters reordered')
+      router.refresh()
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
+      setIsUpdating(false)
     }
   }
 
@@ -97,6 +118,7 @@ export const ChaptersForm = ({ initialData, courseId }: ChaptersFormProps) => {
       {!isCreating && (
         <div className={cn('mt-2 text-sm', !initialData.chapters.length && 'italic text-slate-500')}>
           {!initialData.chapters.length && 'No chapters'}
+          <ChaptersList onEdit={onEdit} onReorder={onReorder} items={initialData.chapters || []} />
         </div>
       )}
       {!isCreating && <p className="mt-4 text-xs text-muted-foreground">Drag and drop to reorder the chapters</p>}
