@@ -7,6 +7,49 @@ type Params = { chapterId: string; courseId: string }
 
 const { Video } = new Mux(process.env.MUX_TOKEN_ID!, process.env.MUX_TOKEN_SECRET!)
 
+export async function DELETE(req: NextRequest, { params }: { params: Params }) {
+  const { userId } = auth()
+
+  if (!userId) {
+    return new NextResponse('Unauthorized', { status: 401 })
+  }
+
+  const ownCourse = await db.course.findUnique({ where: { id: params.courseId, createdById: userId } })
+
+  if (!ownCourse) {
+    return new NextResponse('Unauthorized', { status: 401 })
+  }
+
+  const chapter = await db.chapter.findUnique({ where: { id: params.chapterId, courseId: params.courseId } })
+  if (!chapter) {
+    return new NextResponse('Chapter not found', { status: 404 })
+  }
+
+  if (chapter.videoUrl) {
+    const existingMuxData = await db.muxData.findFirst({ where: { chapterId: params.chapterId } })
+
+    if (existingMuxData) {
+      await Video.Assets.del(existingMuxData.assetId)
+      await db.muxData.delete({ where: { id: existingMuxData.id } })
+    }
+  }
+
+  const deletedChapter = await db.chapter.delete({ where: { id: params.chapterId } })
+
+  const publishedChaptersInCourse = await db.chapter.count({
+    where: {
+      courseId: params.courseId,
+      isPublished: true,
+    },
+  })
+
+  if (!publishedChaptersInCourse) {
+    await db.course.update({ where: { id: params.courseId }, data: { isPublished: false } })
+  }
+
+  return NextResponse.json(deletedChapter)
+}
+
 export async function PATCH(req: NextRequest, { params }: { params: Params }) {
   try {
     const { userId } = await auth()
