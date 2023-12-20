@@ -19,13 +19,33 @@ export default function ChapterActions({ disbaled, chapterId, courseId, isPublis
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
+  async function onClick() {
+    try {
+      setIsLoading(true)
+
+      if (isPublished) {
+        await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/unpublish`)
+        toast.success('Chapter unpublished')
+      } else {
+        await axios.patch(`/api/courses/${courseId}/chapters/${chapterId}/publish`)
+        toast.success('Chapter published')
+      }
+
+      router.refresh()
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   async function onDelete() {
     try {
       setIsLoading(true)
-      await axios.delete(`/api/courses/${courseId}/chapter/${chapterId}`)
+      await axios.delete(`/api/courses/${courseId}/chapters/${chapterId}`)
       toast.success('Chapters deleted successfully')
       router.refresh()
-      router.push(`/teacher/course/${courseId}`)
+      router.push(`/teacher/courses/${courseId}`)
     } catch (error) {
       toast.error('Something went wrong')
     } finally {
@@ -35,7 +55,7 @@ export default function ChapterActions({ disbaled, chapterId, courseId, isPublis
 
   return (
     <div className="flex items-center gap-x-2">
-      <Button variant="outline" size="sm" disabled={disbaled || isLoading}>
+      <Button variant="outline" size="sm" disabled={disbaled || isLoading} onClick={onClick}>
         {isPublished ? 'Unpublish' : 'Publish'}
       </Button>
       <ConfirmModal onConfirm={onDelete}>
